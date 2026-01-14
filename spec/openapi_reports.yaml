@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.1.0
 info:
   title: KPI Reports API
   version: 1.0.0
@@ -11,6 +11,7 @@ paths:
   /api/reports:
     get:
       summary: List available reports
+      operationId: listReports
       responses:
         '200':
           description: List of reports
@@ -27,6 +28,7 @@ paths:
   /api/reports/run:
     post:
       summary: Run a report and return JSON rows
+      operationId: runReport
       requestBody:
         required: true
         content:
