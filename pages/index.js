@@ -3,253 +3,253 @@ import Head from 'next/head';
 const coreKpis = [
   {
     id: 'KPI01',
-    title: 'Profit Margin',
-    subtitle: 'Project financials',
+    title: 'Kar Marjı',
+    subtitle: 'Proje finansalları',
     groups: [
       {
-        name: 'Financials',
+        name: 'Finansallar',
         fields: [
-          { label: 'Project code', type: 'text', placeholder: 'PRJ-001' },
-          { label: 'Period start', type: 'date' },
-          { label: 'Period end', type: 'date' },
-          { label: 'Revenue', type: 'number', placeholder: '0.00' },
-          { label: 'Direct costs', type: 'number', placeholder: '0.00' },
-          { label: 'Currency', type: 'text', placeholder: 'USD' }
+          { label: 'Proje kodu', type: 'text', placeholder: 'PRJ-001' },
+          { label: 'Dönem başlangıcı', type: 'date' },
+          { label: 'Dönem bitişi', type: 'date' },
+          { label: 'Gelir', type: 'number', placeholder: '0.00' },
+          { label: 'Doğrudan maliyet', type: 'number', placeholder: '0.00' },
+          { label: 'Para birimi', type: 'text', placeholder: 'USD' }
         ]
       }
     ],
-    action: 'Save financials'
+    action: 'Finansalları kaydet'
   },
   {
     id: 'KPI02',
-    title: 'Innovation Share',
-    subtitle: 'Manual flag with AI score',
+    title: 'İnovasyon Payı',
+    subtitle: 'Manuel bayrak ve AI puanı',
     groups: [
       {
-        name: 'Manual input',
+        name: 'Manuel giriş',
         fields: [
-          { label: 'Project code', type: 'text', placeholder: 'PRJ-001' },
-          { label: 'Period start', type: 'date' },
-          { label: 'Period end', type: 'date' },
-          { label: 'Innovation flag', type: 'select', options: ['Yes', 'No'] },
-          { label: 'Innovation description', type: 'textarea', placeholder: 'Describe the innovation' },
-          { label: 'Tags (comma)', type: 'text', placeholder: 'automation, ai' }
+          { label: 'Proje kodu', type: 'text', placeholder: 'PRJ-001' },
+          { label: 'Dönem başlangıcı', type: 'date' },
+          { label: 'Dönem bitişi', type: 'date' },
+          { label: 'İnovasyon bayrağı', type: 'select', options: ['Evet', 'Hayır'] },
+          { label: 'İnovasyon açıklaması', type: 'textarea', placeholder: 'İnovasyonu açıklayın' },
+          { label: 'Etiketler (virgülle)', type: 'text', placeholder: 'otomasyon, ai' }
         ]
       },
       {
-        name: 'AI scoring',
+        name: 'AI puanlama',
         fields: [
-          { label: 'AI score', type: 'number', placeholder: '0-100' },
-          { label: 'Score status', type: 'select', options: ['pending', 'scored', 'failed'] }
+          { label: 'AI puanı', type: 'number', placeholder: '0-100' },
+          { label: 'Puan durumu', type: 'select', options: ['Beklemede', 'Puanlandı', 'Hata'] }
         ]
       }
     ],
-    action: 'Save innovation input',
-    secondaryAction: 'Request AI score'
+    action: 'İnovasyon girdisini kaydet',
+    secondaryAction: 'AI puanı iste'
   },
   {
     id: 'KPI03',
-    title: 'ISG Compliance',
-    subtitle: 'Safety audit score',
+    title: 'İSG Uyum',
+    subtitle: 'İş güvenliği denetim skoru',
     groups: [
       {
-        name: 'Audit record',
+        name: 'Denetim kaydı',
         fields: [
-          { label: 'Audit date', type: 'date' },
-          { label: 'Department id', type: 'text', placeholder: 'UUID' },
-          { label: 'Audit score', type: 'number', placeholder: '0-100' },
-          { label: 'Scope', type: 'text', placeholder: 'Plant, line, site' }
+          { label: 'Denetim tarihi', type: 'date' },
+          { label: 'Departman ID', type: 'text', placeholder: 'UUID' },
+          { label: 'Denetim skoru', type: 'number', placeholder: '0-100' },
+          { label: 'Kapsam', type: 'text', placeholder: 'Tesis, hat, saha' }
         ]
       }
     ],
-    action: 'Save audit'
+    action: 'Denetimi kaydet'
   },
   {
     id: 'KPI04',
-    title: 'ISO Compliance',
-    subtitle: 'Audit quality and closure',
+    title: 'ISO Uyum',
+    subtitle: 'Denetim kalitesi ve kapanış',
     groups: [
       {
-        name: 'Audit record',
+        name: 'Denetim kaydı',
         fields: [
-          { label: 'Audit date', type: 'date' },
-          { label: 'Department id', type: 'text', placeholder: 'UUID' },
-          { label: 'ISO standard', type: 'text', placeholder: 'ISO-9001' },
-          { label: 'Audit score', type: 'number', placeholder: '0-100' },
-          { label: 'Nonconformity count', type: 'number', placeholder: '0' },
-          { label: 'Closed on time', type: 'number', placeholder: '0' },
-          { label: 'Critical findings', type: 'number', placeholder: '0' }
+          { label: 'Denetim tarihi', type: 'date' },
+          { label: 'Departman ID', type: 'text', placeholder: 'UUID' },
+          { label: 'ISO standardı', type: 'text', placeholder: 'ISO-9001' },
+          { label: 'Denetim skoru', type: 'number', placeholder: '0-100' },
+          { label: 'Uygunsuzluk sayısı', type: 'number', placeholder: '0' },
+          { label: 'Zamanında kapanan sayısı', type: 'number', placeholder: '0' },
+          { label: 'Kritik bulgu sayısı', type: 'number', placeholder: '0' }
         ]
       }
     ],
-    action: 'Save audit'
+    action: 'Denetimi kaydet'
   },
   {
     id: 'KPI05',
-    title: 'OTIF Delivery',
-    subtitle: 'On time and in full',
+    title: 'OTIF Teslimat',
+    subtitle: 'Zamanında ve eksiksiz',
     groups: [
       {
-        name: 'Delivery record',
+        name: 'Teslimat kaydı',
         fields: [
-          { label: 'Project code', type: 'text', placeholder: 'PRJ-001' },
-          { label: 'Committed date', type: 'datetime-local' },
-          { label: 'Final delivery date', type: 'datetime-local' },
-          { label: 'Delivered fully', type: 'select', options: ['Yes', 'No'] },
-          { label: 'Delivery status', type: 'select', options: ['DELIVERED', 'IN_PROGRESS', 'CANCELLED', 'ON_HOLD'] },
-          { label: 'Excused delay', type: 'select', options: ['No', 'Yes'] },
-          { label: 'Cancellation flag', type: 'select', options: ['No', 'Yes'] }
+          { label: 'Proje kodu', type: 'text', placeholder: 'PRJ-001' },
+          { label: 'Taahhüt tarihi', type: 'datetime-local' },
+          { label: 'Nihai teslim tarihi', type: 'datetime-local' },
+          { label: 'Eksiksiz teslim', type: 'select', options: ['Evet', 'Hayır'] },
+          { label: 'Teslimat durumu', type: 'select', options: ['Teslim edildi', 'Devam ediyor', 'İptal', 'Beklemede'] },
+          { label: 'Mazeretli gecikme', type: 'select', options: ['Hayır', 'Evet'] },
+          { label: 'İptal işareti', type: 'select', options: ['Hayır', 'Evet'] }
         ]
       }
     ],
-    action: 'Save delivery'
+    action: 'Teslimatı kaydet'
   },
   {
     id: 'KPI06',
-    title: 'Rework Cost',
-    subtitle: 'Hours by role',
+    title: 'Yeniden İşleme Maliyeti',
+    subtitle: 'Role göre saat',
     groups: [
       {
-        name: 'Rework entry',
+        name: 'Yeniden işleme kaydı',
         fields: [
-          { label: 'Project code', type: 'text', placeholder: 'PRJ-001' },
-          { label: 'Work date', type: 'date' },
-          { label: 'Rework hours', type: 'number', placeholder: '0.0' },
-          { label: 'Role name', type: 'text', placeholder: 'Engineer' },
-          { label: 'Rework reason', type: 'textarea', placeholder: 'Root cause summary' }
+          { label: 'Proje kodu', type: 'text', placeholder: 'PRJ-001' },
+          { label: 'Çalışma tarihi', type: 'date' },
+          { label: 'Yeniden işleme saati', type: 'number', placeholder: '0.0' },
+          { label: 'Rol adı', type: 'text', placeholder: 'Mühendis' },
+          { label: 'Yeniden işleme nedeni', type: 'textarea', placeholder: 'Kök neden özeti' }
         ]
       }
     ],
-    action: 'Save rework'
+    action: 'Yeniden işleme kaydet'
   },
   {
     id: 'KPI07',
-    title: 'Standardization Score',
-    subtitle: 'Code quality and coverage',
+    title: 'Standardizasyon Skoru',
+    subtitle: 'Kod kalitesi ve kapsama',
     groups: [
       {
-        name: 'Score entry',
+        name: 'Skor girişi',
         fields: [
-          { label: 'Project code', type: 'text', placeholder: 'PRJ-001' },
-          { label: 'Period start', type: 'date' },
-          { label: 'Period end', type: 'date' },
-          { label: 'Standard score', type: 'number', placeholder: '0-100' },
-          { label: 'Code review coverage', type: 'number', placeholder: '0-100' },
-          { label: 'CI pass rate', type: 'number', placeholder: '0-100' },
-          { label: 'Lint compliance', type: 'number', placeholder: '0-100' }
+          { label: 'Proje kodu', type: 'text', placeholder: 'PRJ-001' },
+          { label: 'Dönem başlangıcı', type: 'date' },
+          { label: 'Dönem bitişi', type: 'date' },
+          { label: 'Standardizasyon skoru', type: 'number', placeholder: '0-100' },
+          { label: 'Kod inceleme kapsaması', type: 'number', placeholder: '0-100' },
+          { label: 'CI geçiş oranı', type: 'number', placeholder: '0-100' },
+          { label: 'Lint uyumluluğu', type: 'number', placeholder: '0-100' }
         ]
       }
     ],
-    action: 'Save score'
+    action: 'Skoru kaydet'
   },
   {
     id: 'KPI08',
-    title: 'Training Hours',
-    subtitle: 'Training records and headcount',
+    title: 'Eğitim Saatleri',
+    subtitle: 'Eğitim kayıtları ve kadro',
     groups: [
       {
-        name: 'Training record',
+        name: 'Eğitim kaydı',
         fields: [
-          { label: 'Person id', type: 'text', placeholder: 'UUID' },
-          { label: 'Course', type: 'text', placeholder: 'Safety basics' },
-          { label: 'Completed date', type: 'date' },
-          { label: 'Hours', type: 'number', placeholder: '0.0' }
+          { label: 'Kişi ID', type: 'text', placeholder: 'UUID' },
+          { label: 'Kurs', type: 'text', placeholder: 'İş güvenliği temelleri' },
+          { label: 'Tamamlanma tarihi', type: 'date' },
+          { label: 'Saat', type: 'number', placeholder: '0.0' }
         ]
       },
       {
-        name: 'Headcount snapshot',
+        name: 'Kadro anlık görüntüsü',
         fields: [
-          { label: 'Department id', type: 'text', placeholder: 'UUID' },
-          { label: 'Snapshot date', type: 'date' },
-          { label: 'Headcount', type: 'number', placeholder: '0' }
+          { label: 'Departman ID', type: 'text', placeholder: 'UUID' },
+          { label: 'Anlık tarih', type: 'date' },
+          { label: 'Kadro', type: 'number', placeholder: '0' }
         ]
       }
     ],
-    action: 'Save training'
+    action: 'Eğitimi kaydet'
   },
   {
     id: 'KPI09',
-    title: 'New Technology',
-    subtitle: 'Automation and new tech',
+    title: 'Yeni Teknoloji',
+    subtitle: 'Otomasyon ve yeni teknoloji',
     groups: [
       {
-        name: 'Technology entry',
+        name: 'Teknoloji girişi',
         fields: [
-          { label: 'Project code', type: 'text', placeholder: 'PRJ-001' },
-          { label: 'Tech tag', type: 'text', placeholder: 'robotics' },
-          { label: 'Implementation date', type: 'date' },
-          { label: 'Status', type: 'select', options: ['POC', 'PILOT', 'PROD', 'RETIRED'] },
-          { label: 'Notes', type: 'textarea', placeholder: 'Impact summary' }
+          { label: 'Proje kodu', type: 'text', placeholder: 'PRJ-001' },
+          { label: 'Teknoloji etiketi', type: 'text', placeholder: 'robotik' },
+          { label: 'Uygulama tarihi', type: 'date' },
+          { label: 'Durum', type: 'select', options: ['POC', 'Pilot', 'Prod', 'Emekli'] },
+          { label: 'Notlar', type: 'textarea', placeholder: 'Etki özeti' }
         ]
       }
     ],
-    action: 'Save technology'
+    action: 'Teknolojiyi kaydet'
   },
   {
     id: 'KPI10',
-    title: 'Test Coverage',
-    subtitle: 'FAT and SAT results',
+    title: 'Test Kapsaması',
+    subtitle: 'FAT ve SAT sonuçları',
     groups: [
       {
-        name: 'Test record',
+        name: 'Test kaydı',
         fields: [
-          { label: 'Project code', type: 'text', placeholder: 'PRJ-001' },
-          { label: 'Test type', type: 'select', options: ['FAT', 'SAT'] },
-          { label: 'Attempt no', type: 'number', placeholder: '1' },
-          { label: 'Result', type: 'select', options: ['PASS', 'FAIL', 'CANCELLED'] },
-          { label: 'Test date', type: 'date' },
-          { label: 'First pass', type: 'select', options: ['No', 'Yes'] }
+          { label: 'Proje kodu', type: 'text', placeholder: 'PRJ-001' },
+          { label: 'Test tipi', type: 'select', options: ['FAT', 'SAT'] },
+          { label: 'Deneme no', type: 'number', placeholder: '1' },
+          { label: 'Sonuç', type: 'select', options: ['Geçti', 'Kaldı', 'İptal'] },
+          { label: 'Test tarihi', type: 'date' },
+          { label: 'İlk seferde geçti', type: 'select', options: ['Hayır', 'Evet'] }
         ]
       }
     ],
-    action: 'Save test'
+    action: 'Testi kaydet'
   },
   {
     id: 'KPI11',
-    title: 'Cost Accuracy',
-    subtitle: 'Estimate vs actual',
+    title: 'Maliyet Doğruluğu',
+    subtitle: 'Tahmin ve gerçekleşen',
     groups: [
       {
-        name: 'Estimate',
+        name: 'Tahmin',
         fields: [
-          { label: 'Project code', type: 'text', placeholder: 'PRJ-001' },
-          { label: 'Estimate date', type: 'date' },
-          { label: 'Estimated cost', type: 'number', placeholder: '0.00' },
-          { label: 'Currency', type: 'text', placeholder: 'USD' },
-          { label: 'Estimate version', type: 'text', placeholder: 'v1' }
+          { label: 'Proje kodu', type: 'text', placeholder: 'PRJ-001' },
+          { label: 'Tahmin tarihi', type: 'date' },
+          { label: 'Tahmini maliyet', type: 'number', placeholder: '0.00' },
+          { label: 'Para birimi', type: 'text', placeholder: 'USD' },
+          { label: 'Tahmin versiyonu', type: 'text', placeholder: 'v1' }
         ]
       },
       {
-        name: 'Actual cost',
+        name: 'Gerçekleşen maliyet',
         fields: [
-          { label: 'Project code', type: 'text', placeholder: 'PRJ-001' },
-          { label: 'Period start', type: 'date' },
-          { label: 'Period end', type: 'date' },
-          { label: 'Actual cost', type: 'number', placeholder: '0.00' },
-          { label: 'Currency', type: 'text', placeholder: 'USD' }
+          { label: 'Proje kodu', type: 'text', placeholder: 'PRJ-001' },
+          { label: 'Dönem başlangıcı', type: 'date' },
+          { label: 'Dönem bitişi', type: 'date' },
+          { label: 'Gerçekleşen maliyet', type: 'number', placeholder: '0.00' },
+          { label: 'Para birimi', type: 'text', placeholder: 'USD' }
         ]
       }
     ],
-    action: 'Save costs'
+    action: 'Maliyetleri kaydet'
   },
   {
     id: 'KPI12',
-    title: 'Skill Growth',
-    subtitle: 'Baseline vs current',
+    title: 'Yetkinlik Artışı',
+    subtitle: 'Başlangıç ve mevcut',
     groups: [
       {
-        name: 'Assessment',
+        name: 'Değerlendirme',
         fields: [
-          { label: 'Person id', type: 'text', placeholder: 'UUID' },
-          { label: 'Assessment type', type: 'select', options: ['baseline', 'current'] },
-          { label: 'Assessment cycle id', type: 'text', placeholder: 'UUID' },
-          { label: 'Assessment date', type: 'date' },
-          { label: 'Skill score', type: 'number', placeholder: '0-100' },
-          { label: 'Skill domain', type: 'text', placeholder: 'Controls' }
+          { label: 'Kişi ID', type: 'text', placeholder: 'UUID' },
+          { label: 'Değerlendirme tipi', type: 'select', options: ['Başlangıç', 'Mevcut'] },
+          { label: 'Değerlendirme döngüsü ID', type: 'text', placeholder: 'UUID' },
+          { label: 'Değerlendirme tarihi', type: 'date' },
+          { label: 'Yetkinlik skoru', type: 'number', placeholder: '0-100' },
+          { label: 'Yetkinlik alanı', type: 'text', placeholder: 'Kontrol' }
         ]
       }
     ],
-    action: 'Save assessment'
+    action: 'Değerlendirmeyi kaydet'
   }
 ];
 
@@ -257,83 +257,83 @@ const extraKpis = [
   {
     id: 'KPI13',
     title: 'CSAT',
-    subtitle: 'Client satisfaction',
+    subtitle: 'Müşteri memnuniyeti',
     groups: [
       {
-        name: 'Survey',
+        name: 'Anket',
         fields: [
-          { label: 'Project code', type: 'text', placeholder: 'PRJ-001' },
-          { label: 'Survey date', type: 'date' },
-          { label: 'Score raw', type: 'number', placeholder: '1-5' },
-          { label: 'Scale max', type: 'number', placeholder: '5' },
-          { label: 'Respondent type', type: 'text', placeholder: 'Customer' },
-          { label: 'Comment', type: 'textarea', placeholder: 'Short feedback' }
+          { label: 'Proje kodu', type: 'text', placeholder: 'PRJ-001' },
+          { label: 'Anket tarihi', type: 'date' },
+          { label: 'Ham skor', type: 'number', placeholder: '1-5' },
+          { label: 'Maks ölçek', type: 'number', placeholder: '5' },
+          { label: 'Katılımcı tipi', type: 'text', placeholder: 'Müşteri' },
+          { label: 'Yorum', type: 'textarea', placeholder: 'Kısa geri bildirim' }
         ]
       }
     ],
-    action: 'Save CSAT'
+    action: 'CSAT kaydet'
   },
   {
     id: 'KPI14',
-    title: 'Engagement',
-    subtitle: 'Team engagement score',
+    title: 'Ekip Bağlılığı',
+    subtitle: 'Ekip bağlılık skoru',
     groups: [
       {
-        name: 'Survey',
+        name: 'Anket',
         fields: [
-          { label: 'Department id', type: 'text', placeholder: 'UUID' },
-          { label: 'Survey date', type: 'date' },
-          { label: 'Score raw', type: 'number', placeholder: '1-5' },
-          { label: 'Scale max', type: 'number', placeholder: '5' },
-          { label: 'Response count', type: 'number', placeholder: '1' },
-          { label: 'Survey cycle id', type: 'text', placeholder: 'UUID' }
+          { label: 'Departman ID', type: 'text', placeholder: 'UUID' },
+          { label: 'Anket tarihi', type: 'date' },
+          { label: 'Ham skor', type: 'number', placeholder: '1-5' },
+          { label: 'Maks ölçek', type: 'number', placeholder: '5' },
+          { label: 'Yanıt sayısı', type: 'number', placeholder: '1' },
+          { label: 'Anket döngüsü ID', type: 'text', placeholder: 'UUID' }
         ]
       }
     ],
-    action: 'Save engagement'
+    action: 'Bağlılığı kaydet'
   },
   {
     id: 'KPI15',
-    title: 'Risk Register',
-    subtitle: 'Critical safety risks',
+    title: 'Risk Envanteri',
+    subtitle: 'Kritik emniyet riskleri',
     groups: [
       {
-        name: 'Risk entry',
+        name: 'Risk kaydı',
         fields: [
-          { label: 'Project code', type: 'text', placeholder: 'PRJ-001' },
-          { label: 'Risk code', type: 'text', placeholder: 'R-001' },
-          { label: 'Identified date', type: 'date' },
-          { label: 'Last review date', type: 'date' },
-          { label: 'Safety related', type: 'select', options: ['Yes', 'No'] },
-          { label: 'Initial score', type: 'number', placeholder: '1-25' },
-          { label: 'Current score', type: 'number', placeholder: '0-25' },
-          { label: 'Status', type: 'select', options: ['OPEN', 'MITIGATED', 'CLOSED'] },
-          { label: 'Mitigation actions', type: 'textarea', placeholder: 'Action plan' }
+          { label: 'Proje kodu', type: 'text', placeholder: 'PRJ-001' },
+          { label: 'Risk kodu', type: 'text', placeholder: 'R-001' },
+          { label: 'Tespit tarihi', type: 'date' },
+          { label: 'Son gözden geçirme tarihi', type: 'date' },
+          { label: 'Emniyet ilgili', type: 'select', options: ['Evet', 'Hayır'] },
+          { label: 'Başlangıç skoru', type: 'number', placeholder: '1-25' },
+          { label: 'Güncel skor', type: 'number', placeholder: '0-25' },
+          { label: 'Durum', type: 'select', options: ['Açık', 'Azaltıldı', 'Kapandı'] },
+          { label: 'Azaltma aksiyonları', type: 'textarea', placeholder: 'Aksiyon planı' }
         ]
       }
     ],
-    action: 'Save risk'
+    action: 'Riski kaydet'
   },
   {
     id: 'KPI16',
-    title: 'Innovation ROI',
-    subtitle: 'Investment and benefits',
+    title: 'İnovasyon ROI',
+    subtitle: 'Yatırım ve fayda',
     groups: [
       {
-        name: 'ROI entry',
+        name: 'ROI girişi',
         fields: [
-          { label: 'Project code', type: 'text', placeholder: 'PRJ-001' },
-          { label: 'Period start', type: 'date' },
-          { label: 'Period end', type: 'date' },
-          { label: 'Investment cost', type: 'number', placeholder: '0.00' },
-          { label: 'Incremental revenue', type: 'number', placeholder: '0.00' },
-          { label: 'Cost savings', type: 'number', placeholder: '0.00' },
-          { label: 'Incremental costs', type: 'number', placeholder: '0.00' },
-          { label: 'Currency', type: 'text', placeholder: 'USD' }
+          { label: 'Proje kodu', type: 'text', placeholder: 'PRJ-001' },
+          { label: 'Dönem başlangıcı', type: 'date' },
+          { label: 'Dönem bitişi', type: 'date' },
+          { label: 'Yatırım maliyeti', type: 'number', placeholder: '0.00' },
+          { label: 'Artan gelir', type: 'number', placeholder: '0.00' },
+          { label: 'Maliyet tasarrufu', type: 'number', placeholder: '0.00' },
+          { label: 'Artan maliyetler', type: 'number', placeholder: '0.00' },
+          { label: 'Para birimi', type: 'text', placeholder: 'USD' }
         ]
       }
     ],
-    action: 'Save ROI'
+    action: 'ROI kaydet'
   }
 ];
 
@@ -344,7 +344,7 @@ function Field({ field }) {
         <span>{field.label}</span>
         <select defaultValue="">
           <option value="" disabled>
-            Select
+            Seçiniz
           </option>
           {field.options.map((option) => (
             <option key={option} value={option}>
@@ -411,85 +411,85 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>KPI Control Room</title>
-        <meta name="description" content="KPI data entry and reporting" />
+        <title>KPI Kontrol Merkezi</title>
+        <meta name="description" content="KPI veri girişi ve raporlama" />
       </Head>
       <div className="page">
         <header className="topbar">
           <div className="brand">
             <span className="brand-mark" />
             <div>
-              <div className="brand-title">KPI Control Room</div>
-              <div className="brand-sub">Railway + Postgres + GPT Actions</div>
+              <div className="brand-title">KPI Kontrol Merkezi</div>
+              <div className="brand-sub">Railway + Postgres + GPT Actions altyapısı</div>
             </div>
           </div>
           <div className="top-actions">
-            <button className="btn ghost" type="button">Help</button>
-            <button className="btn" type="button">New Project</button>
+            <button className="btn ghost" type="button">Yardım</button>
+            <button className="btn" type="button">Yeni Proje</button>
           </div>
         </header>
 
         <div className="layout">
           <aside className="side-nav">
             <div className="nav-section">
-              <div className="nav-title">Workspace</div>
-              <button className="nav-item active" type="button">Data Entry</button>
-              <button className="nav-item" type="button">CSV Import</button>
-              <button className="nav-item" type="button">Reports</button>
-              <button className="nav-item" type="button">Settings</button>
+              <div className="nav-title">Çalışma Alanı</div>
+              <button className="nav-item active" type="button">Veri Girişi</button>
+              <button className="nav-item" type="button">CSV İçe Aktar</button>
+              <button className="nav-item" type="button">Raporlar</button>
+              <button className="nav-item" type="button">Ayarlar</button>
             </div>
             <div className="nav-section">
-              <div className="nav-title">Scope</div>
-              <div className="nav-chip">Global</div>
-              <div className="nav-chip">Department</div>
-              <div className="nav-chip">Person</div>
+              <div className="nav-title">Kapsam</div>
+              <div className="nav-chip">Genel</div>
+              <div className="nav-chip">Departman</div>
+              <div className="nav-chip">Kişi</div>
             </div>
           </aside>
 
           <main className="main">
             <section className="hero">
               <div>
-                <h1>Manual KPI input with instant report hooks.</h1>
+                <h1>Anlık rapor bağlantılarıyla manuel KPI girişi.</h1>
                 <p>
-                  Enter the raw signals once, compute KPIs per period, and let GPT
-                  fetch the exact report payloads on demand.
+                  Ham verileri bir kez girin, KPI'ları dönem bazında hesaplayın ve GPT'nin
+                  raporları ihtiyaç olduğunda çekmesini sağlayın.
                 </p>
               </div>
               <div className="hero-panel">
-                <div className="hero-title">Period and scope</div>
+                <div className="hero-title">Dönem ve kapsam</div>
                 <div className="hero-grid">
                   <label className="field">
-                    <span>Period start</span>
+                    <span>Dönem başlangıcı</span>
                     <input type="date" />
                   </label>
                   <label className="field">
-                    <span>Period end</span>
+                    <span>Dönem bitişi</span>
                     <input type="date" />
                   </label>
                   <label className="field">
-                    <span>Scope type</span>
+                    <span>Kapsam tipi</span>
                     <select defaultValue="global">
-                      <option value="global">Global</option>
-                      <option value="department">Department</option>
-                      <option value="person">Person</option>
+                      <option value="global">Genel</option>
+                      <option value="department">Departman</option>
+                      <option value="person">Kişi</option>
                     </select>
                   </label>
                   <label className="field">
-                    <span>Scope id</span>
-                    <input type="text" placeholder="UUID (optional for global)" />
+                    <span>Kapsam ID</span>
+                    <input type="text" placeholder="UUID (genel için opsiyonel)" />
                   </label>
                 </div>
                 <div className="hero-actions">
-                  <button className="btn" type="button">Compute KPIs</button>
-                  <button className="btn ghost" type="button">Run KPI summary</button>
+                  <button className="btn" type="button">KPI'ları hesapla</button>
+                  <button className="btn ghost" type="button">KPI özetini getir</button>
                 </div>
               </div>
             </section>
 
             <section className="section">
               <div className="section-header">
-                <h2>Core KPI inputs</h2>
-                <p>Manual entry modules aligned to the KPI formulas.</p>
+                <h2>Temel KPI girdileri</h2>
+                <p>KPI formülleriyle uyumlu manuel giriş modülleri.</p>
               </div>
               <div className="card-grid">
                 {coreKpis.map((kpi, index) => (
@@ -500,8 +500,8 @@ export default function Home() {
 
             <section className="section alt">
               <div className="section-header">
-                <h2>Additional KPI inputs</h2>
-                <p>Optional modules for CSAT, engagement, risks, and ROI.</p>
+                <h2>Ek KPI girdileri</h2>
+                <p>CSAT, bağlılık, risk ve ROI için opsiyonel modüller.</p>
               </div>
               <div className="card-grid">
                 {extraKpis.map((kpi, index) => (
@@ -512,28 +512,28 @@ export default function Home() {
 
             <section className="section">
               <div className="section-header">
-                <h2>CSV or Excel import</h2>
-                <p>Drop your files, map columns, and push into the tables.</p>
+                <h2>CSV veya Excel içe aktarım</h2>
+                <p>Dosyaları bırakın, alanları eşleyin ve tablolara aktarın.</p>
               </div>
               <div className="dropzone">
                 <div>
-                  <strong>Drag and drop files here</strong>
-                  <span>Accepted: CSV, XLSX</span>
+                  <strong>Dosyaları buraya sürükle bırak</strong>
+                  <span>Kabul edilen: CSV, XLSX</span>
                 </div>
-                <button className="btn" type="button">Upload file</button>
+                <button className="btn" type="button">Dosya yükle</button>
               </div>
             </section>
           </main>
 
           <aside className="right-rail">
             <div className="panel">
-              <div className="panel-title">Live KPI snapshot</div>
+              <div className="panel-title">Canlı KPI özeti</div>
               <div className="metric">
-                <span>KPI01 Profit Margin</span>
+                <span>KPI01 Kar Marjı</span>
                 <span className="metric-value">--</span>
               </div>
               <div className="metric">
-                <span>KPI02 Innovation Share</span>
+                <span>KPI02 İnovasyon Payı</span>
                 <span className="metric-value">--</span>
               </div>
               <div className="metric">
@@ -541,27 +541,27 @@ export default function Home() {
                 <span className="metric-value">--</span>
               </div>
               <div className="metric">
-                <span>KPI15 Risk Reduction</span>
+                <span>KPI15 Risk Azaltma</span>
                 <span className="metric-value">--</span>
               </div>
-              <button className="btn" type="button">Refresh results</button>
+              <button className="btn" type="button">Sonuçları yenile</button>
             </div>
 
             <div className="panel">
-              <div className="panel-title">GPT Actions ready</div>
+              <div className="panel-title">GPT Actions hazır</div>
               <p className="panel-text">
-                Reports are exposed via /api/reports and /api/reports/run. Keep the
-                API key in Railway variables and wire the schema into GPT Actions.
+                Raporlar /api/reports ve /api/reports/run üzerinden sunulur. API anahtarını
+                Railway değişkenlerine ekleyin ve şemayı GPT Actions'a bağlayın.
               </p>
-              <button className="btn ghost" type="button">Copy OpenAPI schema</button>
+              <button className="btn ghost" type="button">OpenAPI şemasını kopyala</button>
             </div>
 
             <div className="panel">
-              <div className="panel-title">Quick reports</div>
-              <button className="btn ghost" type="button">kpi_summary</button>
-              <button className="btn ghost" type="button">kpi_timeseries</button>
-              <button className="btn ghost" type="button">risk_register</button>
-              <button className="btn ghost" type="button">csat_details</button>
+              <div className="panel-title">Hızlı raporlar</div>
+              <button className="btn ghost" type="button">KPI Özeti</button>
+              <button className="btn ghost" type="button">KPI Zaman Serisi</button>
+              <button className="btn ghost" type="button">Risk Envanteri</button>
+              <button className="btn ghost" type="button">CSAT Detay</button>
             </div>
           </aside>
         </div>
