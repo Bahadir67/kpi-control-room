@@ -1,0 +1,149 @@
+KPI YÖNETİM AKIŞI
+├─ 1) Veri & Sistemler
+│   ├─ PM Tool / Contracts
+│   │   └─ (project_id, project_code, contract_committed_date, contract_id, project_owner)
+│   ├─ Test System (FAT / SAT)
+│   │   └─ (fat_date, fat_result, sat_date, sat_result, customer_acceptance_flag)
+│   ├─ ERP / Proje Muhasebe
+│   │   └─ (project_revenue, project_direct_costs, invoice_dates)
+│   ├─ Code Repo / CI-CD
+│   │   └─ (use_of_standard_libs_flag, code_review_coverage, ci_build_status)
+│   ├─ LMS / Training Records
+│   │   └─ (person_id, training_course, training_completed_date, hours)
+│   ├─ ISG / ISO Denetim Sistemi
+│   │   └─ (audit_date, audit_score, critical_findings)
+│   ├─ Change Order System
+│   │   └─ (change_order_id, change_order_effective_date, approved_at)
+│   └─ CRM / Customer Acceptance
+│       └─ (acceptance_date, acceptance_document, punch_list_items_count)
+
+├─ 2) Ingest & Validation (ETL)
+│   ├─ Normalize timestamps → ISO8601 (UTC)
+│   ├─ Validate required fields; mark data_quality_flags / validation_errors
+│   ├─ Enrich:
+│   │   ├─ effective_committed_date ← contract_committed_date or last approved change_order_effective_date
+│   │   └─ delivered_scope_fully_accepted ← function(test_acceptance, docs, training, punch_list)
+│   ├─ Set flags: excluded_for_data_quality, excused_delay, cancellation_flag, partial_delivery_flag
+│   └─ Route data → Measurements / Projects DB
+
+├─ 3) Measurements / Projects DB (ana tablo)
+│   ├─ Temel alanlar:
+│   │   ├─ project_id (UUID)
+│   │   ├─ effective_committed_date (timestamptz)
+│   │   ├─ final_delivery_date (timestamptz)
+│   │   ├─ delivery_status (DELIVERED/IN_PROGRESS/CANCELLED/…)
+│   │   ├─ delivered_scope_fully_accepted (boolean | NULL)
+│   │   ├─ documentation_complete_flag (boolean)
+│   │   ├─ training_complete_flag (boolean)
+│   │   ├─ punch_list_open_items_count (int)
+│   │   └─ cancellation_flag, excluded_for_data_quality, data_source_system, record_last_updated_at/by
+│   └─ Tarihsel ölçümler ve ham metric’ler burada saklanır.
+
+├─ 4) Olaylar (Event triggers)
+│   ├─ FAT/SAT sonucu geldiğinde → Event: FAT/SAT Result
+│   ├─ Change order onayı geldiğinde → Event
+│   └─ Yeni ölçüm/ölçü seti yüklendiğinde → Event
+│       └─ Bu olaylar Compute Engine’i tetikler (event-driven)
+
+├─ 5) Data Quality Kararı
+│   ├─ Eğer Data Quality OK → KPI Compute Engine’e devam
+│   ├─ Eksik/Invalid → Data Review (Ops / PM) → düzeltme → yeniden Ingest
+│   └─ Excused Delay (meşru gecikme) → Escalate to Management (inceleme/karar)
+
+├─ 6) KPI Compute Engine
+│   ├─ Çalışma biçimleri:
+│   │   ├─ Scheduler (aylık / çeyreklik / proje bazlı)
+│   │   └─ Event-driven (FAT sonucu, change order, manuel trigger)
+│   ├─ Hesaplama: kpi_results tablosuna yazar (kpi_code, period_start/end, value, unit, details JSON)
+│   ├─ details içinde: numeratör, denominatör, etkilenen project_id’ler, veri kaynakları
+│   └─ Her compute işleminde audit log oluşturulur
+
+├─ 7) KPI Katmanları
+│   ├─ Yönetici (Management) KPI’ları
+│   │   ├─ Project Profit Margin (brüt)
+│   │   ├─ Innovation Revenue Share
+│   │   └─ ISG Score / ISO Compliance
+│   ├─ Departmansal KPI’lar
+│   │   ├─ OTIF (On Time In Full)
+│   │   ├─ Rework Rate
+│   │   ├─ SW Standardization Rate
+│   │   └─ Training Hours per Person
+│   └─ Bireysel KPI’lar
+│       ├─ FAT First-Pass Rate
+│       ├─ New Tech Count (AI/IoT uygulamaları)
+│       ├─ Cost Estimate Accuracy (ortalama sapma %)
+│       └─ Skill Growth (yetkinlik artışı)
+
+├─ 8) Önemli Göstergeler ve Etki Zincirleri (kısa)
+│   ├─ SW Standardization  → (reduces) Rework Rate
+│   ├─ Training Hours      → (increases) Skill Growth
+│   ├─ Skill Growth        → (reduces) Rework Rate
+│   ├─ Rework Rate         → (reduces) OTIF
+│   ├─ FAT First-Pass      → (increases) OTIF
+│   ├─ OTIF                → (increases) Project Profit Margin
+│   └─ Innovation Share    → (increases) Project Profit Margin
+
+├─ 9) Dashboard & Alerts
+│   ├─ KPI kartı: güncel değer, hedef bandı, renk (yeşil/sarı/kırmızı), son hesaplama zamanı
+│   ├─ Trend grafiği (son 12 ay), mini-sparkline, aylık değişim %
+│   ├─ Drilldown: numeratör/denominatör, proje listesi (OTIF dışı projeler), export CSV
+│   ├─ Uyarı kuralları: eşik bazlı (örn. OTIF < 80% kırmızı), anlık alert kanalları
+│   └─ Export: CSV / PDF / PPT özet
+
+├─10) Management Review (girdi ve çıktı)
+│   ├─ Girdi:
+│   │   ├─ Dashboard raporları (monthly ops / finance)
+│   │   ├─ Audit logs & compute details
+│   │   └─ Data quality eskalasyonları
+│   ├─ Frekans:
+│   │   ├─ Haftalık: operasyonel kritikler
+│   │   ├─ Aylık: operasyonel KPI’lar (OTIF, Rework, FAT pass)
+│   │   └─ Çeyreklik: stratejik KPI’lar (Innovation, ISG)
+│   └─ Çıktı / Aksiyonlar:
+│       ├─ Approve targets / Overrides (audit ile)
+│       ├─ Mandate code standards (Action → Code Repo)
+│       ├─ Approve training budget (Action → LMS)
+│       ├─ Change order policy / exceptions (Action → CO process)
+│       └─ Root-cause task forces / resource reallocation
+
+├─11) Audit Logs & History
+│   ├─ Her compute, data değişikliği ve yönetim onayı için kayıt
+│   ├─ details: kim, ne zaman, hangi veri/hesaplama kullanıldı, neden override yapıldı
+│   └─ Kullanım: denetim, hata tespiti, veri doğrulama
+
+├─12) Alerts / Escalations
+│   ├─ Kanallar: Email / Slack / SMS
+│   ├─ Trigger örnekleri:
+│   │   ├─ OTIF aylık kırmızı
+│   │   ├─ FAT başarısızlığı veya düşük first-pass
+│   │   └─ Büyük data-quality issue
+│   └─ Sonuç: otomatik bildirim + Management Review eskalasyonu
+
+├─13) Data Quality & İstisnalar
+│   ├─ Excluded projects: veri yetersizse veya iptalse hesaplamadan çıkarılır (raporda ayrı listelenir)
+│   ├─ Manual override: sadece yönetim onayıyla, audit kaydı zorunlu
+│   ├─ Excused delays: politika ile belirlenir (hangi gecikmeler OTIF’den hariç tutulur)
+│   └─ Partial deliveries: final delivery mı yoksa deliverable bazlı mı ölçüleceği politika ile netleştirilir
+
+└─14) Raporlama Frekansı & Sorumlular (özet)
+    ├─ Haftalık (Operasyonel)
+    │   ├─ İçerik: kritik OTIF dışı projeler, yüksek rework projeleri, data quality warnings
+    │   └─ Alıcılar: Otomasyon Müdürü / PM
+    ├─ Aylık (Operasyonel)
+    │   ├─ İçerik: OTIF, Rework Rate, FAT First-Pass, açık punch-list’ler, proje drilldown
+    │   └─ Alıcılar: Departman Yöneticileri, PMO
+    ├─ Aylık (Finans)
+    │   ├─ İçerik: Project Profit, maliyet sapmaları, innovation revenue share
+    │   └─ Alıcılar: Finans Direktörü, Üst Yönetim
+    ├─ Çeyreklik (Stratejik)
+    │   ├─ İçerik: ISG/ISO uyumu, inovasyon payı, hedef revizyonu
+    │   └─ Alıcılar: Direktörler, CEO
+    └─ Olay Tabanlı
+        ├─ İçerik: FAT fail, büyük data-quality issue, legal/contract exceptions
+        └─ Alıcılar: İlgili yöneticiler + Management Review (acil oturum)
+
+EK NOTLAR (kısa)
+├─ Tüm timestamp’ler ISO8601 (RFC3339), DB’de UTC (timestamptz)
+├─ compute sonuçları detaylı JSON ile saklanmalı (numerator/denominator + proje listesi)
+├─ delivered_scope_fully_accepted otomatik hesaplanmalı; NULL ise denominator politikasına göre (öneri: hariç tut)
+└─ Tüm değişiklikler RBAC ile korunmalı; yönetim override’ları audit’e yazılmalı

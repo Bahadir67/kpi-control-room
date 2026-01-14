@@ -1,0 +1,136 @@
+openapi: 3.0.3
+info:
+  title: KPI Reports API
+  version: 1.0.0
+  description: Report endpoints for KPI data and GPT Actions.
+servers:
+  - url: https://your-railway-app.up.railway.app
+security:
+  - BearerAuth: []
+paths:
+  /api/reports:
+    get:
+      summary: List available reports
+      responses:
+        '200':
+          description: List of reports
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportList'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/reports/run:
+    post:
+      summary: Run a report and return JSON rows
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportRunRequest'
+      responses:
+        '200':
+          description: Report result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportResult'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    ReportList:
+      type: object
+      properties:
+        reports:
+          type: array
+          items:
+            $ref: '#/components/schemas/Report'
+    Report:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        scopes:
+          type: array
+          items:
+            type: string
+        params:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReportParam'
+    ReportParam:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+        required:
+          type: boolean
+    ReportRunRequest:
+      type: object
+      required:
+        - report_id
+        - period_start
+        - period_end
+      properties:
+        report_id:
+          type: string
+        period_start:
+          type: string
+          format: date
+        period_end:
+          type: string
+          format: date
+        scope_type:
+          type: string
+          description: global, department, or person
+        scope_id:
+          type: string
+          format: uuid
+        kpi_code:
+          type: string
+        limit:
+          type: integer
+    ReportResult:
+      type: object
+      properties:
+        report_id:
+          type: string
+        rows:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        meta:
+          type: object
+          additionalProperties: true
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
