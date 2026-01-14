@@ -1,20 +1,22 @@
 import Head from 'next/head';
+import { useState } from 'react';
 
 const coreKpis = [
   {
     id: 'KPI01',
     title: 'Kar Marjı',
     subtitle: 'Proje finansalları',
+    submitEndpoint: '/api/inputs/kpi01',
     groups: [
       {
         name: 'Finansallar',
         fields: [
-          { label: 'Proje kodu', type: 'text', placeholder: 'PRJ-001' },
-          { label: 'Dönem başlangıcı', type: 'date' },
-          { label: 'Dönem bitişi', type: 'date' },
-          { label: 'Gelir', type: 'number', placeholder: '0.00' },
-          { label: 'Doğrudan maliyet', type: 'number', placeholder: '0.00' },
-          { label: 'Para birimi', type: 'text', placeholder: 'USD' }
+          { label: 'Proje kodu', key: 'project_code', type: 'text', placeholder: 'PRJ-001' },
+          { label: 'Dönem başlangıcı', key: 'period_start', type: 'date' },
+          { label: 'Dönem bitişi', key: 'period_end', type: 'date' },
+          { label: 'Gelir', key: 'revenue', type: 'number', placeholder: '0.00' },
+          { label: 'Doğrudan maliyet', key: 'direct_costs', type: 'number', placeholder: '0.00' },
+          { label: 'Para birimi', key: 'currency', type: 'text', placeholder: 'USD' }
         ]
       }
     ],
@@ -24,23 +26,24 @@ const coreKpis = [
     id: 'KPI02',
     title: 'İnovasyon Payı',
     subtitle: 'Manuel bayrak ve AI puanı',
+    submitEndpoint: '/api/inputs/kpi02',
     groups: [
       {
         name: 'Manuel giriş',
         fields: [
-          { label: 'Proje kodu', type: 'text', placeholder: 'PRJ-001' },
-          { label: 'Dönem başlangıcı', type: 'date' },
-          { label: 'Dönem bitişi', type: 'date' },
-          { label: 'İnovasyon bayrağı', type: 'select', options: ['Evet', 'Hayır'] },
-          { label: 'İnovasyon açıklaması', type: 'textarea', placeholder: 'İnovasyonu açıklayın' },
-          { label: 'Etiketler (virgülle)', type: 'text', placeholder: 'otomasyon, ai' }
+          { label: 'Proje kodu', key: 'project_code', type: 'text', placeholder: 'PRJ-001' },
+          { label: 'Dönem başlangıcı', key: 'period_start', type: 'date' },
+          { label: 'Dönem bitişi', key: 'period_end', type: 'date' },
+          { label: 'İnovasyon bayrağı', key: 'innovation_flag', type: 'select', options: ['Evet', 'Hayır'] },
+          { label: 'İnovasyon açıklaması', key: 'innovation_description', type: 'textarea', placeholder: 'İnovasyonu açıklayın' },
+          { label: 'Etiketler (virgülle)', key: 'innovation_tags', type: 'text', placeholder: 'otomasyon, ai' }
         ]
       },
       {
         name: 'AI puanlama',
         fields: [
-          { label: 'AI puanı', type: 'number', placeholder: '0-100' },
-          { label: 'Puan durumu', type: 'select', options: ['Beklemede', 'Puanlandı', 'Hata'] }
+          { label: 'AI puanı', key: 'innovation_score', type: 'number', placeholder: '0-100' },
+          { label: 'Puan durumu', key: 'score_status', type: 'select', options: ['Beklemede', 'Puanlandı', 'Hata'] }
         ]
       }
     ],
@@ -337,12 +340,37 @@ const extraKpis = [
   }
 ];
 
-function Field({ field }) {
+const initialFormState = {
+  KPI01: {
+    project_code: '',
+    period_start: '',
+    period_end: '',
+    revenue: '',
+    direct_costs: '',
+    currency: 'USD'
+  },
+  KPI02: {
+    project_code: '',
+    period_start: '',
+    period_end: '',
+    innovation_flag: '',
+    innovation_description: '',
+    innovation_tags: '',
+    innovation_score: '',
+    score_status: ''
+  }
+};
+
+function Field({ field, value, onChange }) {
+  const isControlled = typeof onChange === 'function';
   if (field.type === 'select') {
+    const selectProps = isControlled
+      ? { value: value ?? '', onChange }
+      : { defaultValue: '' };
     return (
       <label className="field">
         <span>{field.label}</span>
-        <select defaultValue="">
+        <select {...selectProps}>
           <option value="" disabled>
             Seçiniz
           </option>
@@ -356,22 +384,29 @@ function Field({ field }) {
     );
   }
   if (field.type === 'textarea') {
+    const textareaProps = isControlled
+      ? { value: value ?? '', onChange }
+      : {};
     return (
       <label className="field field-full">
         <span>{field.label}</span>
-        <textarea placeholder={field.placeholder || ''} rows={3} />
+        <textarea placeholder={field.placeholder || ''} rows={3} {...textareaProps} />
       </label>
     );
   }
+  const inputProps = isControlled
+    ? { value: value ?? '', onChange }
+    : {};
   return (
     <label className="field">
       <span>{field.label}</span>
-      <input type={field.type || 'text'} placeholder={field.placeholder || ''} />
+      <input type={field.type || 'text'} placeholder={field.placeholder || ''} {...inputProps} />
     </label>
   );
 }
 
-function KpiCard({ kpi, index }) {
+function KpiCard({ kpi, index, formValues, onFieldChange, onSubmit, status }) {
+  const isSaving = status?.tone === 'loading';
   return (
     <div className="card" style={{ '--delay': `${index * 0.04}s` }}>
       <div className="card-header">
@@ -387,27 +422,94 @@ function KpiCard({ kpi, index }) {
             <div className="group-title">{group.name}</div>
             <div className="field-grid">
               {group.fields.map((field) => (
-                <Field key={`${group.name}-${field.label}`} field={field} />
+                <Field
+                  key={`${group.name}-${field.label}`}
+                  field={field}
+                  value={field.key && formValues ? formValues[field.key] : undefined}
+                  onChange={
+                    field.key && formValues && onFieldChange
+                      ? (event) => onFieldChange(field.key, event.target.value)
+                      : undefined
+                  }
+                />
               ))}
             </div>
           </div>
         ))}
       </div>
       <div className="card-actions">
-        <button className="btn" type="button">
+        <button
+          className="btn"
+          type="button"
+          disabled={isSaving}
+          onClick={onSubmit}
+        >
           {kpi.action}
         </button>
         {kpi.secondaryAction ? (
-          <button className="btn ghost" type="button">
+          <button className="btn ghost" type="button" disabled={isSaving}>
             {kpi.secondaryAction}
           </button>
         ) : null}
       </div>
+      {status ? (
+        <div className={`card-status ${status.tone}`}>{status.message}</div>
+      ) : null}
     </div>
   );
 }
 
 export default function Home() {
+  const [formState, setFormState] = useState(initialFormState);
+  const [statusMap, setStatusMap] = useState({});
+
+  const handleFieldChange = (kpiId, fieldKey, value) => {
+    setFormState((prev) => ({
+      ...prev,
+      [kpiId]: {
+        ...prev[kpiId],
+        [fieldKey]: value
+      }
+    }));
+  };
+
+  const handleSubmit = async (kpi) => {
+    if (!kpi.submitEndpoint) {
+      return;
+    }
+    setStatusMap((prev) => ({
+      ...prev,
+      [kpi.id]: { tone: 'loading', message: 'Kaydediliyor...' }
+    }));
+    try {
+      const response = await fetch(kpi.submitEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formState[kpi.id] || {})
+      });
+      let data = {};
+      try {
+        data = await response.json();
+      } catch (error) {
+        data = {};
+      }
+      if (!response.ok) {
+        throw new Error(data.error || 'Kayıt başarısız.');
+      }
+      setStatusMap((prev) => ({
+        ...prev,
+        [kpi.id]: { tone: 'success', message: 'Kaydedildi.' }
+      }));
+    } catch (error) {
+      setStatusMap((prev) => ({
+        ...prev,
+        [kpi.id]: { tone: 'error', message: error.message }
+      }));
+    }
+  };
+
   return (
     <>
       <Head>
@@ -492,9 +594,27 @@ export default function Home() {
                 <p>KPI formülleriyle uyumlu manuel giriş modülleri.</p>
               </div>
               <div className="card-grid">
-                {coreKpis.map((kpi, index) => (
-                  <KpiCard key={kpi.id} kpi={kpi} index={index} />
-                ))}
+                {coreKpis.map((kpi, index) => {
+                  const formValues = formState[kpi.id];
+                  return (
+                    <KpiCard
+                      key={kpi.id}
+                      kpi={kpi}
+                      index={index}
+                      formValues={formValues}
+                      status={statusMap[kpi.id]}
+                      onFieldChange={
+                        formValues
+                          ? (fieldKey, value) =>
+                              handleFieldChange(kpi.id, fieldKey, value)
+                          : undefined
+                      }
+                      onSubmit={
+                        kpi.submitEndpoint ? () => handleSubmit(kpi) : undefined
+                      }
+                    />
+                  );
+                })}
               </div>
             </section>
 
@@ -505,7 +625,11 @@ export default function Home() {
               </div>
               <div className="card-grid">
                 {extraKpis.map((kpi, index) => (
-                  <KpiCard key={kpi.id} kpi={kpi} index={index + coreKpis.length} />
+                  <KpiCard
+                    key={kpi.id}
+                    kpi={kpi}
+                    index={index + coreKpis.length}
+                  />
                 ))}
               </div>
             </section>
