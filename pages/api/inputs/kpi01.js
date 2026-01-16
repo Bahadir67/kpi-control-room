@@ -22,7 +22,8 @@ function parseNumber(value, label) {
   if (value === null || value === undefined || value === '') {
     throw badRequest(`${label} zorunlu.`);
   }
-  const parsed = Number(value);
+  const normalized = String(value).trim().replace(',', '.');
+  const parsed = Number(normalized);
   if (!Number.isFinite(parsed)) {
     throw badRequest(`${label} sayi olmalidir.`);
   }

@@ -52,7 +52,8 @@ function parseScore(value) {
   if (value === null || value === undefined || value === '') {
     return null;
   }
-  const parsed = Number(value);
+  const normalized = String(value).trim().replace(',', '.');
+  const parsed = Number(normalized);
   if (!Number.isFinite(parsed)) {
     throw badRequest('AI puani sayi olmalidir.');
   }

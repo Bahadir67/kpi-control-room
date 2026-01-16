@@ -364,6 +364,62 @@ p {
   color: var(--muted);
 }
 
+.import-panel {
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.import-controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.import-meta {
+  font-size: 0.85rem;
+  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.import-hint {
+  font-size: 0.8rem;
+}
+
+.import-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.import-status {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.import-status.success {
+  color: var(--accent);
+}
+
+.import-status.warning {
+  color: #a86b1f;
+}
+
+.import-status.error {
+  color: #b14a2b;
+}
+
+.import-status.loading {
+  color: #8a6b4f;
+}
+
 .right-rail {
   display: flex;
   flex-direction: column;
@@ -459,6 +515,9 @@ p {
   }
   .field-full {
     grid-column: span 1;
+  }
+  .import-controls {
+    grid-template-columns: 1fr;
   }
   .dropzone {
     flex-direction: column;

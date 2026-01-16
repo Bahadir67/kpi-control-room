@@ -340,6 +340,166 @@ const extraKpis = [
   }
 ];
 
+const importDefinitions = {
+  kpi01: {
+    label: 'KPI01 - Kar Marjı',
+    endpoint: '/api/imports/kpi01',
+    required: ['project_code', 'period_start', 'period_end', 'revenue', 'direct_costs', 'currency'],
+    optional: []
+  },
+  kpi02: {
+    label: 'KPI02 - İnovasyon Payı',
+    endpoint: '/api/imports/kpi02',
+    required: [
+      'project_code',
+      'period_start',
+      'period_end',
+      'innovation_flag'
+    ],
+    optional: ['innovation_description', 'innovation_tags', 'innovation_score', 'score_status']
+  }
+};
+
+const importHeaderAliases = {
+  'proje kodu': 'project_code',
+  'project code': 'project_code',
+  proje: 'project_code',
+  'donem baslangici': 'period_start',
+  'dönem başlangıcı': 'period_start',
+  'period start': 'period_start',
+  'donem bitisi': 'period_end',
+  'dönem bitişi': 'period_end',
+  'period end': 'period_end',
+  gelir: 'revenue',
+  revenue: 'revenue',
+  'dogrudan maliyet': 'direct_costs',
+  'doğrudan maliyet': 'direct_costs',
+  'direct costs': 'direct_costs',
+  'para birimi': 'currency',
+  currency: 'currency',
+  'inovasyon bayragi': 'innovation_flag',
+  'inovasyon bayrağı': 'innovation_flag',
+  'innovation flag': 'innovation_flag',
+  'inovasyon aciklamasi': 'innovation_description',
+  'inovasyon açıklaması': 'innovation_description',
+  'innovation description': 'innovation_description',
+  'etiketler': 'innovation_tags',
+  'etiketler (virgulle)': 'innovation_tags',
+  'etiketler (virgülle)': 'innovation_tags',
+  tags: 'innovation_tags',
+  'ai puani': 'innovation_score',
+  'ai puanı': 'innovation_score',
+  'innovation score': 'innovation_score',
+  'puan durumu': 'score_status',
+  'score status': 'score_status'
+};
+
+const importFieldSet = new Set(
+  Object.values(importHeaderAliases).concat([
+    'project_code',
+    'period_start',
+    'period_end',
+    'revenue',
+    'direct_costs',
+    'currency',
+    'innovation_flag',
+    'innovation_description',
+    'innovation_tags',
+    'innovation_score',
+    'score_status'
+  ])
+);
+
+function normalizeAscii(value) {
+  return value
+    .replace(/ı/g, 'i')
+    .replace(/İ/g, 'i')
+    .replace(/ş/g, 's')
+    .replace(/Ş/g, 's')
+    .replace(/ğ/g, 'g')
+    .replace(/Ğ/g, 'g')
+    .replace(/ü/g, 'u')
+    .replace(/Ü/g, 'u')
+    .replace(/ö/g, 'o')
+    .replace(/Ö/g, 'o')
+    .replace(/ç/g, 'c')
+    .replace(/Ç/g, 'c');
+}
+
+function normalizeHeader(value) {
+  if (!value) {
+    return '';
+  }
+  const raw = normalizeAscii(String(value)).toLowerCase().trim();
+  if (!raw) {
+    return '';
+  }
+  const normalized = raw.replace(/\s+/g, ' ');
+  if (importHeaderAliases[normalized]) {
+    return importHeaderAliases[normalized];
+  }
+  const snake = normalized.replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+  return importFieldSet.has(snake) ? snake : '';
+}
+
+function detectDelimiter(line) {
+  const commaCount = (line.match(/,/g) || []).length;
+  const semiCount = (line.match(/;/g) || []).length;
+  return semiCount > commaCount ? ';' : ',';
+}
+
+function splitCsvLine(line, delimiter) {
+  const result = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i += 1) {
+    const char = line[i];
+    if (char === '"') {
+      if (inQuotes && line[i + 1] === '"') {
+        current += '"';
+        i += 1;
+      } else {
+        inQuotes = !inQuotes;
+      }
+      continue;
+    }
+    if (char === delimiter && !inQuotes) {
+      result.push(current);
+      current = '';
+      continue;
+    }
+    current += char;
+  }
+  result.push(current);
+  return result;
+}
+
+function parseCsv(text) {
+  const cleaned = text.replace(/^\uFEFF/, '');
+  const lines = cleaned.split(/\r?\n/).filter((line) => line.trim() !== '');
+  if (!lines.length) {
+    return { rows: [], headerKeys: [] };
+  }
+  const delimiter = detectDelimiter(lines[0]);
+  const rawHeaders = splitCsvLine(lines[0], delimiter);
+  const headerKeys = rawHeaders.map((header) => normalizeHeader(header));
+  const rows = [];
+  for (let i = 1; i < lines.length; i += 1) {
+    const cells = splitCsvLine(lines[i], delimiter);
+    const row = {};
+    headerKeys.forEach((key, index) => {
+      if (!key) {
+        return;
+      }
+      row[key] = cells[index] ? String(cells[index]).trim() : '';
+    });
+    if (Object.values(row).some((value) => value !== '')) {
+      rows.push(row);
+    }
+  }
+  return { rows, headerKeys };
+}
+
 const initialFormState = {
   KPI01: {
     project_code: '',
@@ -462,6 +622,12 @@ function KpiCard({ kpi, index, formValues, onFieldChange, onSubmit, status }) {
 export default function Home() {
   const [formState, setFormState] = useState(initialFormState);
   const [statusMap, setStatusMap] = useState({});
+  const [importType, setImportType] = useState('kpi01');
+  const [importRows, setImportRows] = useState([]);
+  const [importHeaders, setImportHeaders] = useState([]);
+  const [importFileName, setImportFileName] = useState('');
+  const [importStatus, setImportStatus] = useState(null);
+  const [importError, setImportError] = useState('');
 
   const handleFieldChange = (kpiId, fieldKey, value) => {
     setFormState((prev) => ({
@@ -509,6 +675,75 @@ export default function Home() {
       }));
     }
   };
+
+  const handleImportTypeChange = (event) => {
+    setImportType(event.target.value);
+    setImportRows([]);
+    setImportHeaders([]);
+    setImportFileName('');
+    setImportStatus(null);
+    setImportError('');
+  };
+
+  const handleCsvChange = async (event) => {
+    const file = event.target.files && event.target.files[0];
+    if (!file) {
+      return;
+    }
+    setImportStatus(null);
+    setImportError('');
+    setImportFileName(file.name);
+    const text = await file.text();
+    const { rows, headerKeys } = parseCsv(text);
+    setImportRows(rows);
+    setImportHeaders(headerKeys);
+    if (!rows.length) {
+      setImportError('Dosyada veri satırı bulunamadı.');
+      return;
+    }
+    const definition = importDefinitions[importType];
+    const missing = definition.required.filter((key) => !headerKeys.includes(key));
+    if (missing.length) {
+      setImportError(`Eksik kolonlar: ${missing.join(', ')}`);
+    }
+  };
+
+  const handleImportSubmit = async () => {
+    if (!importRows.length) {
+      setImportError('Önce CSV dosyası yükleyin.');
+      return;
+    }
+    const definition = importDefinitions[importType];
+    const missing = definition.required.filter((key) => !importHeaders.includes(key));
+    if (missing.length) {
+      setImportError(`Eksik kolonlar: ${missing.join(', ')}`);
+      return;
+    }
+    setImportError('');
+    setImportStatus({ tone: 'loading', message: 'İçe aktarılıyor...' });
+    try {
+      const response = await fetch(definition.endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ rows: importRows })
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'İçe aktarım başarısız.');
+      }
+      const message =
+        data.failed && data.failed > 0
+          ? `${data.imported} satır aktarıldı, ${data.failed} hata var.`
+          : `${data.imported} satır aktarıldı.`;
+      setImportStatus({ tone: data.failed > 0 ? 'warning' : 'success', message });
+    } catch (error) {
+      setImportStatus({ tone: 'error', message: error.message });
+    }
+  };
+
+  const currentImport = importDefinitions[importType];
 
   return (
     <>
@@ -637,14 +872,58 @@ export default function Home() {
             <section className="section">
               <div className="section-header">
                 <h2>CSV veya Excel içe aktarım</h2>
-                <p>Dosyaları bırakın, alanları eşleyin ve tablolara aktarın.</p>
+                <p>CSV dosyalarını yükleyip KPI girişlerini toplu aktarın.</p>
               </div>
-              <div className="dropzone">
-                <div>
-                  <strong>Dosyaları buraya sürükle bırak</strong>
-                  <span>Kabul edilen: CSV, XLSX</span>
+              <div className="import-panel">
+                <div className="import-controls">
+                  <label className="field">
+                    <span>İçe aktarım tipi</span>
+                    <select value={importType} onChange={handleImportTypeChange}>
+                      {Object.entries(importDefinitions).map(([key, definition]) => (
+                        <option key={key} value={key}>
+                          {definition.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="field">
+                    <span>CSV dosyası</span>
+                    <input type="file" accept=".csv" onChange={handleCsvChange} />
+                  </label>
                 </div>
-                <button className="btn" type="button">Dosya yükle</button>
+                <div className="import-meta">
+                  <div>
+                    <strong>Beklenen kolonlar:</strong> {currentImport.required.join(', ')}
+                  </div>
+                  {currentImport.optional && currentImport.optional.length ? (
+                    <div>
+                      <strong>Opsiyonel kolonlar:</strong> {currentImport.optional.join(', ')}
+                    </div>
+                  ) : null}
+                  <div>Dosya: {importFileName || 'Seçilmedi'}</div>
+                  <div>Satır sayısı: {importRows.length}</div>
+                  <div className="import-hint">
+                    Excel için dosyayı CSV olarak kaydedip yükleyin.
+                  </div>
+                </div>
+                <div className="import-actions">
+                  <button
+                    className="btn"
+                    type="button"
+                    onClick={handleImportSubmit}
+                    disabled={importStatus?.tone === 'loading'}
+                  >
+                    İçe aktar
+                  </button>
+                </div>
+                {importError ? (
+                  <div className="import-status error">{importError}</div>
+                ) : null}
+                {importStatus ? (
+                  <div className={`import-status ${importStatus.tone}`}>
+                    {importStatus.message}
+                  </div>
+                ) : null}
               </div>
             </section>
           </main>
